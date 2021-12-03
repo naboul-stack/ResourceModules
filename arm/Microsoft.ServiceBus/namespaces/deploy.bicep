@@ -154,7 +154,7 @@ resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2021-06-01-preview
 }
 
 module serviceBusNamespace_disasterRecoveryConfig 'disasterRecoveryConfigs/deploy.bicep' = if (!empty(disasterRecoveryConfigs)) {
-  name: '${uniqueString(deployment().name, location)}-DisasterRecoveryConfig'
+  name: '${uniqueString(deployment().name, location)}-ServiceBus-DisasterRecConfig'
   params: {
     namespaceName: serviceBusNamespace.name
     name: contains(disasterRecoveryConfigs, 'name') ? disasterRecoveryConfigs.name : 'default'
@@ -164,7 +164,7 @@ module serviceBusNamespace_disasterRecoveryConfig 'disasterRecoveryConfigs/deplo
 }
 
 module serviceBusNamespace_migrationConfigurations 'migrationConfigurations/deploy.bicep' = if (!empty(migrationConfigurations)) {
-  name: '${uniqueString(deployment().name, location)}-MigrationConfigurations'
+  name: '${uniqueString(deployment().name, location)}-ServiceBus-MigrationConfig'
   params: {
     namespaceName: serviceBusNamespace.name
     name: contains(migrationConfigurations, 'name') ? migrationConfigurations.name : '$default'
@@ -174,7 +174,7 @@ module serviceBusNamespace_migrationConfigurations 'migrationConfigurations/depl
 }
 
 module serviceBusNamespace_virtualNetworkRules 'virtualNetworkRules/deploy.bicep' = [for (virtualNetworkRule, index) in virtualNetworkRules: {
-  name: '${uniqueString(deployment().name, location)}-VirtualNetworkRules-${index}'
+  name: '${uniqueString(deployment().name, location)}-ServiceBus-VirtualNetRules-${index}'
   params: {
     namespaceName: serviceBusNamespace.name
     name: last(split(virtualNetworkRule, '/'))
@@ -183,7 +183,7 @@ module serviceBusNamespace_virtualNetworkRules 'virtualNetworkRules/deploy.bicep
 }]
 
 module serviceBusNamespace_authorizationRules 'authorizationRules/deploy.bicep' = [for (authorizationRule, index) in authorizationRules: {
-  name: '${uniqueString(deployment().name, location)}-AuthorizationRules-${index}'
+  name: '${uniqueString(deployment().name, location)}-ServiceBus-AuthRules-${index}'
   params: {
     namespaceName: serviceBusNamespace.name
     name: authorizationRule.name
@@ -192,7 +192,7 @@ module serviceBusNamespace_authorizationRules 'authorizationRules/deploy.bicep' 
 }]
 
 module serviceBusNamespace_ipFilterRules 'ipFilterRules/deploy.bicep' = [for (ipFilterRule, index) in ipFilterRules: {
-  name: '${uniqueString(deployment().name, location)}-IpFilterRules-${index}'
+  name: '${uniqueString(deployment().name, location)}-ServiceBus-IpFilterRules-${index}'
   params: {
     namespaceName: serviceBusNamespace.name
     name: contains(ipFilterRule, 'name') ? ipFilterRule.name : ipFilterRule.filterName
@@ -203,7 +203,7 @@ module serviceBusNamespace_ipFilterRules 'ipFilterRules/deploy.bicep' = [for (ip
 }]
 
 module serviceBusNamespace_queues 'queues/deploy.bicep' = [for (queue, index) in queues: {
-  name: '${uniqueString(deployment().name, location)}-Queue-${index}'
+  name: '${uniqueString(deployment().name, location)}-ServiceBus-Queue-${index}'
   params: {
     namespaceName: serviceBusNamespace.name
     name: queue.name
@@ -257,7 +257,7 @@ resource serviceBusNamespace_diagnosticSettings 'Microsoft.Insights/diagnosticSe
 }
 
 module serviceBusNamespace_privateEndpoints '.bicep/nested_privateEndpoints.bicep' = [for (privateEndpoint, index) in privateEndpoints: {
-  name: '${uniqueString(deployment().name, location)}-PrivateEndpoint-${index}'
+  name: '${uniqueString(deployment().name, location)}-ServiceBus-PrivateEndpoint-${index}'
   params: {
     privateEndpointResourceId: serviceBusNamespace.id
     privateEndpointVnetLocation: reference(split(privateEndpoint.subnetResourceId, '/subnets/')[0], '2020-06-01', 'Full').location
@@ -267,7 +267,7 @@ module serviceBusNamespace_privateEndpoints '.bicep/nested_privateEndpoints.bice
 }]
 
 module serviceBusNamespace_rbac '.bicep/nested_rbac.bicep' = [for (roleAssignment, index) in roleAssignments: {
-  name: '${deployment().name}-rbac-${index}'
+  name: '${uniqueString(deployment().name, location)}-ServiceBus-Rbac-${index}'
   params: {
     principalIds: roleAssignment.principalIds
     roleDefinitionIdOrName: roleAssignment.roleDefinitionIdOrName
