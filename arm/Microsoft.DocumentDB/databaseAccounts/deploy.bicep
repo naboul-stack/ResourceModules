@@ -229,7 +229,7 @@ resource databaseAccount_diagnosticSettings 'Microsoft.Insights/diagnosticsettin
 }
 
 module databaseAccount_rbac '.bicep/nested_rbac.bicep' = [for (roleAssignment, index) in roleAssignments: {
-  name: '${uniqueString(deployment().name, location)}-Rbac-${index}'
+  name: '${uniqueString(deployment().name, location)}-DBAccount-Rbac-${index}'
   params: {
     principalIds: roleAssignment.principalIds
     roleDefinitionIdOrName: roleAssignment.roleDefinitionIdOrName
@@ -237,8 +237,8 @@ module databaseAccount_rbac '.bicep/nested_rbac.bicep' = [for (roleAssignment, i
   }
 }]
 
-module sqlDatabases_resource 'sqlDatabases/deploy.bicep' = [for sqlDatabase in sqlDatabases: {
-  name: '${uniqueString(deployment().name, location)}-sqldb-${sqlDatabase.name}'
+module sqlDatabases_resource 'sqlDatabases/deploy.bicep' = [for (sqlDatabase, index) in sqlDatabases: {
+  name: '${uniqueString(deployment().name, location)}-DBAccount-Sqldb-${index}'
   params: {
     databaseAccountName: databaseAccount.name
     name: sqlDatabase.name
@@ -246,8 +246,8 @@ module sqlDatabases_resource 'sqlDatabases/deploy.bicep' = [for sqlDatabase in s
   }
 }]
 
-module mongodbDatabases_resource 'mongodbDatabases/deploy.bicep' = [for mongodbDatabase in mongodbDatabases: {
-  name: '${uniqueString(deployment().name, location)}-mongodb-${mongodbDatabase.name}'
+module mongodbDatabases_resource 'mongodbDatabases/deploy.bicep' = [for (mongodbDatabase, index) in mongodbDatabases: {
+  name: '${uniqueString(deployment().name, location)}-DBAccount-Mongodb-${index}'
   params: {
     databaseAccountName: databaseAccount.name
     name: mongodbDatabase.name

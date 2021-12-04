@@ -39,8 +39,8 @@ resource mongodbDatabase 'Microsoft.DocumentDB/databaseAccounts/mongodbDatabases
   }
 }
 
-module mongodbDatabase_collections 'collections/deploy.bicep' = [for collection in collections: {
-  name: '${uniqueString(deployment().name, mongodbDatabase.name)}-collection-${collection.name}'
+module mongodbDatabase_collections 'collections/deploy.bicep' = [for (collection, index) in collections: {
+  name: '${deployment().name}-Collection-${index}'
   params: {
     databaseAccountName: databaseAccountName
     mongodbDatabaseName: name
