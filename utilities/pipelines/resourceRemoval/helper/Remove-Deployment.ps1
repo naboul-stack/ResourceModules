@@ -84,6 +84,8 @@ function Remove-Deployment {
         }
         $deploymentResourceIds = Get-ResourceIdsOfDeployment @deploymentsInputObject -Verbose
 
+        # TODO: Fetch export template if scope = 'resourceGroup'
+
         # Pre-Filter & order items
         # ========================
         $rawResourceIdsToRemove = $deploymentResourceIds | Sort-Object -Property { $_.Split('/').Count } -Descending | Select-Object -Unique
