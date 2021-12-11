@@ -84,7 +84,11 @@ function Remove-Deployment {
         }
         $deploymentResourceIds = Get-ResourceIdsOfDeployment @deploymentsInputObject -Verbose
 
-        # TODO: Fetch export template if scope = 'resourceGroup'
+        # Add additional associated IDs (e.g. NIC & Disks of VM resources) to the list of resource group resources we'd want to remove...
+        # But do we? What if a NIC/Disk was pre-provisioned (aka is a dependency-resource)?
+        foreach ($resourceId in $deploymentResourceIds | Where-Object { $_.Split('/').Count -eq 9 }) {
+            $deploymentResourceIds += Get-AssociatedResourceIdList -ResourceGroupName $ResourceGroupName -ParentResourceId $resourceId
+        }
 
         # Pre-Filter & order items
         # ========================

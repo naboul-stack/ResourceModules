@@ -20,20 +20,11 @@
         }
         $null = Export-AzResourceGroup @inputObject
 
-        $filteredIds = (Get-Content -Path $resourceJsonFilePath | Select-String -Pattern '"id"') -replace '\s+'
-
-        if ($filteredIds) {
-            Write-Verbose '--------------------------Getting associated resources--------------------------'
-            # Write-Verbose "Filtered Ids:`n$($filteredIds | Out-String)"
-            foreach ($associatedResourceId in $filteredIds) {
-                Write-Verbose "Found: $associatedResourceId"
-                [Array]$associatedResourceIds += $associatedResourceId.Split('"')[3]
-            }
-            Return $associatedResourceIds
-        } else {
-            Write-Verbose "No further associated resource ids found in the parent resource: '$ParentResourceId'."
-            Return $null
+        # Fetch the lines that match '"id": "<desiredResourceId>"'
+        $associatedResourceIds = (Get-Content -Path $resourceJsonFilePath | Select-String -Pattern '"id"').Line.Trim() | ForEach-Object {
+            ($_ | Select-String ': "(.*)"').Matches.Groups[1].Value
         }
+        return $associatedResourceIds
     } catch {
         throw $_
     } finally {
