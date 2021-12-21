@@ -3,7 +3,7 @@
     [CmdletBinding()]
     param(
         [Parameter (Mandatory = $true)]
-        [string] $ResourceGroupName,
+        [string] $ResourceGroupName, # TODO: Should be fetched from the resource ID
 
         [Parameter (Mandatory = $true)]
         [string] $ParentResourceId
