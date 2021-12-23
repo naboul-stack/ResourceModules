@@ -342,7 +342,7 @@ jobs:
 
   job_deploy_udr:
     runs-on: ubuntu-20.04
-    name: 'Deploy sqlmi route tables'
+    name: 'Deploy route tables'
     env:
       namespace: 'Microsoft.Network\routeTables'
     needs:
@@ -797,40 +797,40 @@ jobs:
           managementGroupId: '${{ secrets.ARM_MGMTGROUP_ID }}'
           removeDeployment: '${{ env.removeDeployment }}'
 
-  job_deploy_vnet:
-    runs-on: ubuntu-20.04
-    name: 'Deploy virtual networks'
-    env:
-      namespace: 'Microsoft.Network\virtualNetworks'
-    needs:
-      - job_deploy_nsg
-    strategy:
-      fail-fast: false
-      matrix:
-        parameterFilePaths:
-          [
-            '1.bastion.parameters.json',
-            '2.vnetpeer01.parameters.json',
-            '3.vnetpeer02.parameters.json',
-            '4.azfw.parameters.json',
-            '5.aks.parameters.json',
-            'parameters.json',
-          ]
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: 'Deploy module'
-        uses: ./.github/actions/templates/validateModuleDeployment
-        with:
-          templateFilePath: 'arm/${{ env.namespace }}/deploy.bicep'
-          parameterFilePath: '${{ env.dependencyPath }}/${{ env.namespace }}/parameters/${{ matrix.parameterFilePaths }}'
-          location: '${{ env.defaultLocation }}'
-          resourceGroupName: '${{ env.resourceGroupName }}'
-          subscriptionId: '${{ secrets.ARM_SUBSCRIPTION_ID }}'
-          managementGroupId: '${{ secrets.ARM_MGMTGROUP_ID }}'
-          removeDeployment: '${{ env.removeDeployment }}'
+  # job_deploy_vnet:
+  #   runs-on: ubuntu-20.04
+  #   name: 'Deploy virtual networks'
+  #   env:
+  #     namespace: 'Microsoft.Network\virtualNetworks'
+  #   needs:
+  #     - job_deploy_nsg
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       parameterFilePaths:
+  #         [
+  #           '1.bastion.parameters.json',
+  #           '2.vnetpeer01.parameters.json',
+  #           '3.vnetpeer02.parameters.json',
+  #           '4.azfw.parameters.json',
+  #           '5.aks.parameters.json',
+  #           'parameters.json',
+  #         ]
+  #   steps:
+  #     - name: 'Checkout'
+  #       uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+  #     - name: 'Deploy module'
+  #       uses: ./.github/actions/templates/validateModuleDeployment
+  #       with:
+  #         templateFilePath: 'arm/${{ env.namespace }}/deploy.bicep'
+  #         parameterFilePath: '${{ env.dependencyPath }}/${{ env.namespace }}/parameters/${{ matrix.parameterFilePaths }}'
+  #         location: '${{ env.defaultLocation }}'
+  #         resourceGroupName: '${{ env.resourceGroupName }}'
+  #         subscriptionId: '${{ secrets.ARM_SUBSCRIPTION_ID }}'
+  #         managementGroupId: '${{ secrets.ARM_MGMTGROUP_ID }}'
+  #         removeDeployment: '${{ env.removeDeployment }}'
 
   job_deploy_sqlmi_vnet:
     runs-on: ubuntu-20.04
@@ -895,7 +895,7 @@ jobs:
       namespace: 'Microsoft.Compute\virtualMachines'
     needs:
       - job_deploy_kv_secrets
-      - job_deploy_vnet
+      # - job_deploy_vnet
       - job_deploy_rsv
     strategy:
       fail-fast: false
