@@ -866,8 +866,8 @@ jobs:
     name: 'Deploy private DNS zones'
     env:
       namespace: 'Microsoft.Network\privateDnsZones'
-    needs:
-      - job_deploy_vnet
+    # needs:
+    #   - job_deploy_vnet
     strategy:
       fail-fast: false
       matrix:
